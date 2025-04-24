@@ -1,7 +1,8 @@
 spring:
-application:
-name: akmv-curso-service
-profiles:
-active: development
-config:
-import: optional:configserver:http://root:123456@localhost:7071
+  application:
+    name: akmv-curso-service
+  profiles:
+    active: development
+  config:
+    import: optional:configserver:http://root:123456@localhost:7071
+
