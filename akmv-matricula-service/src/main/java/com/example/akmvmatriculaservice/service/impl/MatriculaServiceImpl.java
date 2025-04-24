@@ -10,7 +10,10 @@ import com.example.akmvmatriculaservice.feign.EstudianteFeign;
 import com.example.akmvmatriculaservice.repository.MatriculaRepository;
 import com.example.akmvmatriculaservice.service.MatriculaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +31,11 @@ public class MatriculaServiceImpl implements MatriculaService {
     @Autowired
     private CursoFeign cursoFeignClient;
 
-
     // Crear una nueva matrícula
     @Override
     public Matricula crearMatricula(Matricula matricula) throws Exception {
         // Obtener estudiante usando Feign Client
-        Estudiante estudiante = estudianteFeignClient.getEstudianteById(matricula.getEstudianteId());
+        EstudianteDTO estudiante = estudianteFeignClient.obtenerEstudiantePorId(matricula.getEstudianteId()).getBody();
         if (estudiante == null) {
             throw new Exception("Estudiante no encontrado");
         }
@@ -44,7 +46,7 @@ public class MatriculaServiceImpl implements MatriculaService {
         }
 
         // Obtener curso usando Feign Client
-        Curso curso = cursoFeignClient.getCursoById(matricula.getCursoCodigo());
+        CursoDTO curso = cursoFeignClient.obtenerCursoPorId(matricula.getCursoCodigo()).getBody();
         if (curso == null) {
             throw new Exception("Curso no encontrado");
         }
@@ -58,19 +60,10 @@ public class MatriculaServiceImpl implements MatriculaService {
         return matriculaRepository.save(matricula);
     }
 
-
-
     // Obtener todas las matrículas
     @Override
     public List<Matricula> obtenerTodasLasMatriculas() {
         return matriculaRepository.findAll();
-    }
-
-    // Obtener matrícula por ID
-    @Override
-    public Matricula obtenerMatriculaPorId(Integer id) {
-        Optional<Matricula> matriculaOptional = matriculaRepository.findById(id);
-        return matriculaOptional.orElse(null); // Retorna null si no se encuentra la matrícula
     }
 
     // Actualizar matrícula
@@ -91,5 +84,32 @@ public class MatriculaServiceImpl implements MatriculaService {
             return true;
         }
         return false; // Retorna false si no se encuentra la matrícula
+    }
+
+    @Override
+    public Optional<Matricula> obtenerMatriculaPorId(Integer id) {
+        Matricula matricula = matriculaRepository.findById(id).orElse(null);
+        if (matricula == null) return Optional.empty();
+
+        try {
+            ResponseEntity<CursoDTO> cursoResponse = cursoFeignClient.obtenerCursoPorId(matricula.getCursoCodigo());
+            ResponseEntity<EstudianteDTO> estudianteResponse = estudianteFeignClient.obtenerEstudiantePorId(matricula.getEstudianteId());
+
+            if (cursoResponse.getBody() == null) throw new Exception("Curso no encontrado");
+            if (estudianteResponse.getBody() == null) throw new Exception("Estudiante no encontrado");
+
+            matricula.setCurso(cursoResponse.getBody());
+            matricula.setEstudiante(estudianteResponse.getBody());
+
+            System.out.println("Estudiante ID: " + matricula.getEstudianteId());
+            System.out.println("Curso Código: " + matricula.getCursoCodigo());
+            System.out.println("Estudiante: " + estudianteResponse.getBody());
+            System.out.println("Curso: " + cursoResponse.getBody());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener datos relacionados: " + e.getMessage());
+        }
+
+        return Optional.of(matricula);
     }
 }
