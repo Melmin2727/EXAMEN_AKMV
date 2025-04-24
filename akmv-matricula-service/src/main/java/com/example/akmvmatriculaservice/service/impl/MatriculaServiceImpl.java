@@ -10,7 +10,6 @@ import com.example.akmvmatriculaservice.feign.EstudianteFeign;
 import com.example.akmvmatriculaservice.repository.MatriculaRepository;
 import com.example.akmvmatriculaservice.service.MatriculaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

@@ -8,9 +8,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 public class AkmvMatriculaServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AkmvMatriculaServiceApplication.class, args);
-		System.out.println("INICIADO CORRECTAMENTE");
+    public static void main(String[] args) {
+        SpringApplication.run(AkmvMatriculaServiceApplication.class, args);
+        System.out.println("INICIADO CORRECTAMENTE");
+    }
 
-	}
 }

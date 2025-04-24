@@ -19,6 +19,8 @@ public class MatriculaCurso {
         this.cursoId = cursoId;
     }
 
+
+
     public Integer getId() {
         return id;
     }

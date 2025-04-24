@@ -1,5 +1,6 @@
 package com.example.akmvmatriculaservice.entity;
 
+import com.example.akmvcursoservice.entity.Curso;
 import com.example.akmvmatriculaservice.dto.CursoDTO;
 import com.example.akmvmatriculaservice.dto.EstudianteDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -34,17 +35,22 @@ public class Matricula {
     @Transient
     private EstudianteDTO estudiante;
 
+
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "curso_id")
     private List<MatriculaCurso> detalle;
 
+
     // Getters y setters para curso y estudiante
+
+
     public CursoDTO getCurso() { return curso; }
     public void setCurso(CursoDTO curso) { this.curso = curso; }
 
     public EstudianteDTO getEstudiante() { return estudiante; }
     public void setEstudiante(EstudianteDTO estudiante) { this.estudiante = estudiante; }
+
 
     public Matricula() {}
 
